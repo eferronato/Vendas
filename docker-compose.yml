@@ -1,0 +1,65 @@
+version: '3.4'
+
+services:
+  sqldata:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    hostname: 'sqlserver'
+    environment:
+      ACCEPT_EULA: 'Y'
+      SA_PASSWORD: "Elton#2022"
+    volumes:
+      - c:\dados\volumes\mssql:/var/opt/mssql/data
+    ports:
+      - '11433:1433'    
+    expose:
+      - 1433
+
+  rabbitmq:        
+    image: rabbitmq:3-management
+    hostname: 'rabbit'
+    ports:
+      - 5672:5672
+      - 15672:15672
+  
+  cadastros.api:
+    image: ${DOCKER_REGISTRY-}cadastrosapi
+    build:
+      context: .
+      dockerfile: Cadastros.API/Dockerfile
+    depends_on:
+      - sqldata
+
+  precos.api:
+    image: ${DOCKER_REGISTRY-}precosapi
+    build:
+      context: .
+      dockerfile: Precos.API/Dockerfile
+    depends_on:
+      - sqldata
+      - rabbitmq
+
+  pedidos.api:
+    image: ${DOCKER_REGISTRY-}pedidosapi
+    build:
+      context: .
+      dockerfile: Pedidos.API/Dockerfile
+    depends_on:
+      - sqldata
+
+  relatorios.api:
+    image: ${DOCKER_REGISTRY-}relatoriosapi
+    build:
+      context: .
+      dockerfile: Relatorios.API/Dockerfile
+    depends_on:
+      - sqldata
+
+  notificacoes.worker:
+    image: ${DOCKER_REGISTRY-}notificacoesworker
+    build:
+      context: .
+      dockerfile: Notificacoes.Worker/Dockerfile
+    depends_on:      
+      - rabbitmq
+      - pedidos.api
+

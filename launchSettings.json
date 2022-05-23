@@ -1,0 +1,20 @@
+{
+  "profiles": {
+    "Docker Compose": {
+      "commandName": "DockerCompose",
+      "composeLaunchServiceName": "precos.api",
+      "serviceActions": {
+        "cadastros.api": "StartDebugging",
+        "precos.api": "StartDebugging",
+        "sqldata": "StartWithoutDebugging",
+        "relatorios.api": "StartDebugging",
+        "notificacoes.worker": "StartDebugging",
+        "pedidos.api": "StartDebugging",
+        "rabbitmq": "StartWithoutDebugging"
+      },
+      "composeLaunchAction": "LaunchBrowser",
+      "commandVersion": "1.0",
+      "composeLaunchUrl": "{Scheme}://localhost:{ServicePort}/swagger"
+    }
+  }
+}
